@@ -4,17 +4,16 @@ import requests
 import re
 from bs4 import BeautifulSoup
 
-leta = range(2019, 2024)
 linki = []
 linki = []
-lige_format = [("LEC", 2019, 2024, ['Spring_Season', 'Spring_Playoffs', 'Summer_Season', 'Summer_Playoffs']),
+lige_format = [("LEC", 2019, 2025, ['Spring_Season', 'Spring_Playoffs', 'Summer_Season', 'Summer_Playoffs']),
                ("EU_LCS", 2014, 2019, ['Spring_Season', 'Spring_Playoffs', 'Summer_Season', 'Summer_Playoffs']),
                ("NA_LCS", 2014, 2019, ['Spring_Season', 'Spring_Playoffs', 'Summer_Season', 'Summer_Playoffs']),
                ("LCS", 2019, 2021, ['Spring_Season', 'Spring_Playoffs', 'Summer_Season', 'Summer_Playoffs']),
                ("LCS", 2021, 2022, ['Spring_Season', 'Lock_In', 'Mid-Season_Showdown', 'Summer_Season', 'Championship']),
-               ("LCS", 2022, 2024, ['Spring_Season', 'Lock_In', 'Spring_Playoffs', 'Summer_Season', 'Championship']),
-               ("LCK", 2016, 2024, ['Spring_Season', 'Spring_Playoffs', 'Summer_Season', 'Summer_Playoffs', 'Regional_Finals']),
-               ("LPL", 2014, 2024, ['Spring_Season', 'Spring_Playoffs', 'Summer_Season', 'Summer_Playoffs', 'Regional_Finals']),
+               ("LCS", 2022, 2025, ['Spring_Season', 'Lock_In', 'Spring_Playoffs', 'Summer_Season', 'Championship']),
+               ("LCK", 2016, 2025, ['Spring_Season', 'Spring_Playoffs', 'Summer_Season', 'Summer_Playoffs', 'Regional_Finals']),
+               ("LPL", 2014, 2025, ['Spring_Season', 'Spring_Playoffs', 'Summer_Season', 'Summer_Playoffs', 'Regional_Finals']),
                ]
 #ime lige, začetek, konec, deli sezone v ligi
 
@@ -60,16 +59,14 @@ def save_frontpage(page, directory, filename):
     text = download_url_to_string(page)
     save_string_to_file(text, directory, filename)
 
-#n = 0        #ta del kode naloži html datoteke
-#for link in linki:
-#    save_frontpage(link, "igre_podatki", f"{n}.html")
-#    n += 1
-zgodovina = {}
-stevilo_iger = 0
+n = 0        #ta del kode naloži html datoteke
+for link in linki:
+    save_frontpage(link, "igre_podatki", f"{n}.html")
+    n += 1
+vse_igre = []
 for i in range(len(linki)):
-    igre = []
     try:
-        with open(f"igre_podatki/{i}.html") as dat:
+        with open(f"igre_podatki/{i}.html", encoding = "utf-8") as dat:
             besedilo = dat.read()
             soup = BeautifulSoup(besedilo, "html.parser")
 
@@ -85,11 +82,13 @@ for i in range(len(linki)):
                 winner = stolpci[4].find('a')['title'].strip()
                 blue_roster = stolpci[9].text.strip()
                 red_roster = stolpci[10].text.strip()
-                igre.append((date, patch, blue_team, red_team, winner, blue_roster.split(","), red_roster.split(",")))
-        zgodovina[i] = igre
-        stevilo_iger += len(igre)
+                vse_igre.append((date, patch, blue_team, red_team, winner, blue_roster.split(","), red_roster.split(","))) #na seznam dodamo čas, patch (verzija igre), obe ekipi ter zmagovalca in pa igralce v ekipah
     except:
         print(f"{i} ni veljaven")
-print(igre)
-print(stevilo_iger)
+print(len(vse_igre))
+os.makedirs("obdelani_podatki", exist_ok=True)
 
+with open("obdelani_podatki/igre.csv", "w", encoding = "utf-8") as dat:
+    writer = csv.writer(dat)
+    for igra in vse_igre:
+        writer.writerow(igra)
