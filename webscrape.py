@@ -60,10 +60,10 @@ def save_frontpage(page, directory, filename):
     text = download_url_to_string(page)
     save_string_to_file(text, directory, filename)
 
-n = 0
-for link in linki:
-    save_frontpage(link, "igre_podatki", f"{n}.html")
-    n += 1
+#n = 0        #ta del kode naloži html datoteke
+#for link in linki:
+#    save_frontpage(link, "igre_podatki", f"{n}.html")
+#    n += 1
 zgodovina = {}
 stevilo_iger = 0
 for i in range(len(linki)):
@@ -83,10 +83,13 @@ for i in range(len(linki)):
                 blue_team = stolpci[2].find('a')['title'].strip()
                 red_team = stolpci[3].find('a')['title'].strip()
                 winner = stolpci[4].find('a')['title'].strip()
-                igre.append((date, patch, blue_team, red_team, winner))
+                blue_roster = stolpci[9].text.strip()
+                red_roster = stolpci[10].text.strip()
+                igre.append((date, patch, blue_team, red_team, winner, blue_roster.split(","), red_roster.split(",")))
         zgodovina[i] = igre
-        print(i)
         stevilo_iger += len(igre)
     except:
         print(f"{i} ni veljaven")
+print(igre)
 print(stevilo_iger)
+
