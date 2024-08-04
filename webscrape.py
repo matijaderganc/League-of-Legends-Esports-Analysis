@@ -59,10 +59,10 @@ def save_frontpage(page, directory, filename):
     text = download_url_to_string(page)
     save_string_to_file(text, directory, filename)
 
-n = 0        #ta del kode naloži html datoteke
-for link in linki:
-    save_frontpage(link, "igre_podatki", f"{n}.html")
-    n += 1
+#n = 0        #ta del kode naloži html datoteke
+#for link in linki:
+#    save_frontpage(link, "igre_podatki", f"{n}.html")
+#    n += 1
 vse_igre = []
 for i in range(len(linki)):
     try:
@@ -86,9 +86,10 @@ for i in range(len(linki)):
     except:
         print(f"{i} ni veljaven")
 print(len(vse_igre))
-os.makedirs("obdelani_podatki", exist_ok=True)
-
-with open("obdelani_podatki/igre.csv", "w", encoding = "utf-8") as dat:
+os.makedirs("podatki_csv", exist_ok=True)
+prva = ('Datum', 'Verzija', 'Modra_Stran', 'Rdeca_Stran', 'Zmagovalec', 'Modri_Igralci', 'Rdeci_Igralci')
+with open("podatki_csv/igre.csv", "w", encoding = "utf-8") as dat:
     writer = csv.writer(dat)
+    writer.writerow(prva)
     for igra in vse_igre:
         writer.writerow(igra)
