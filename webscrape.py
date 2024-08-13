@@ -6,39 +6,41 @@ from bs4 import BeautifulSoup
 
 linki = []
 linki = []
-lige_format = [("LEC", 2019, 2025, ['Spring_Season', 'Spring_Playoffs', 'Summer_Season', 'Summer_Playoffs']),
-               ("EU_LCS", 2014, 2019, ['Spring_Season', 'Spring_Playoffs', 'Summer_Season', 'Summer_Playoffs']),
-               ("NA_LCS", 2014, 2019, ['Spring_Season', 'Spring_Playoffs', 'Summer_Season', 'Summer_Playoffs']),
-               ("LCS", 2019, 2021, ['Spring_Season', 'Spring_Playoffs', 'Summer_Season', 'Summer_Playoffs']),
-               ("LCS", 2021, 2022, ['Spring_Season', 'Lock_In', 'Mid-Season_Showdown', 'Summer_Season', 'Championship']),
-               ("LCS", 2022, 2025, ['Spring_Season', 'Lock_In', 'Spring_Playoffs', 'Summer_Season', 'Championship']),
-               ("LCK", 2016, 2025, ['Spring_Season', 'Spring_Playoffs', 'Summer_Season', 'Summer_Playoffs', 'Regional_Finals']),
-               ("LPL", 2014, 2025, ['Spring_Season', 'Spring_Playoffs', 'Summer_Season', 'Summer_Playoffs', 'Regional_Finals']),
+lige_format = [("LEC", 2019, 2025, ['Spring_Season', 'Spring_Playoffs', 'Summer_Season', 'Summer_Playoffs'], 'LEC'),
+               ("EU_LCS", 2014, 2019, ['Spring_Season', 'Spring_Playoffs', 'Summer_Season', 'Summer_Playoffs'], 'LEC'),
+               ("NA_LCS", 2014, 2019, ['Spring_Season', 'Spring_Playoffs', 'Summer_Season', 'Summer_Playoffs'], 'LCS'),
+               ("LCS", 2019, 2021, ['Spring_Season', 'Spring_Playoffs', 'Summer_Season', 'Summer_Playoffs'], 'LCS'),
+               ("LCS", 2021, 2022, ['Spring_Season', 'Lock_In', 'Mid-Season_Showdown', 'Summer_Season', 'Championship'], 'LCS'),
+               ("LCS", 2022, 2025, ['Spring_Season', 'Lock_In', 'Spring_Playoffs', 'Summer_Season', 'Championship'], 'LCS'),
+               ("LCK", 2013, 2025, ['Spring_Season', 'Spring_Playoffs', 'Summer_Season', 'Summer_Playoffs', 'Regional_Finals'], 'LCK'),
+               ("LPL", 2014, 2025, ['Spring_Season', 'Spring_Playoffs', 'Summer_Season', 'Summer_Playoffs', 'Regional_Finals'], 'LPL'),
                ]
 #ime lige, začetek, konec, deli sezone v ligi
 
 #občasno se izvajajo tudi turnirji, ki so v drugačni obliki kot lige
-turnirji_format = [("_Season_World_Championship", 2014, 2017), 
-                   ("_Season_World_Championship/Main_Event", 2017, 2024),
-                   ("_Mid-Season_Invitational", 2015, 2017),
-                    ("_Mid-Season_Invitational/Main_Event", 2017, 2020),
-                   ("_Mid-Season_Invitational", 2021, 2024)
+turnirji_format = [("_Season_World_Championship", 2014, 2017, 'International'), 
+                   ("_Season_World_Championship/Main_Event", 2017, 2024, 'International'),
+                   ("_Mid-Season_Invitational", 2015, 2017, 'International'),
+                    ("_Mid-Season_Invitational/Main_Event", 2017, 2020, 'International'),
+                   ("_Mid-Season_Invitational", 2021, 2024, 'International')
 
 ]
 
 
 
-
+linki_lige = []
 
 for liga in lige_format:
     for leto in range(liga[1], liga[2]):
         for del_sezone in liga[3]:
             linki.append(f'https://lol.fandom.com/wiki/{liga[0]}/{leto}_Season/{del_sezone}/Match_History')
+            linki_lige.append(liga[4])
 
 
 for turnir in turnirji_format:
     for leto in range(turnir[1], turnir[2]):
         linki.append(f'https://lol.fandom.com/wiki/{leto}{turnir[0]}/Match_History')
+        linki_lige.append(turnir[3])
 
 def download_url_to_string(url):
     try:
@@ -59,10 +61,11 @@ def save_frontpage(page, directory, filename):
     text = download_url_to_string(page)
     save_string_to_file(text, directory, filename)
 
-#n = 0        #ta del kode naloži html datoteke
-#for link in linki:
-#    save_frontpage(link, "igre_podatki", f"{n}.html")
-#    n += 1
+n = 0        #ta del kode naloži html datoteke
+for link in linki:
+    save_frontpage(link, "igre_podatki", f"{n}.html")
+    n += 1
+
 vse_igre = []
 for i in range(len(linki)):
     try:
@@ -82,12 +85,12 @@ for i in range(len(linki)):
                 winner = stolpci[4].find('a')['title'].strip()
                 blue_roster = stolpci[9].text.strip()
                 red_roster = stolpci[10].text.strip()
-                vse_igre.append((date, patch, blue_team, red_team, winner, blue_roster.split(","), red_roster.split(","))) #na seznam dodamo čas, patch (verzija igre), obe ekipi ter zmagovalca in pa igralce v ekipah
+                vse_igre.append((date, patch, blue_team, red_team, winner, blue_roster.split(","), red_roster.split(","), linki_lige[i])) #na seznam dodamo čas, patch (verzija igre), obe ekipi ter zmagovalca in pa igralce v ekipah
     except:
         print(f"{i} ni veljaven")
 print(len(vse_igre))
 os.makedirs("podatki_csv", exist_ok=True)
-prva = ('Datum', 'Verzija', 'Modra_Stran', 'Rdeca_Stran', 'Zmagovalec', 'Modri_Igralci', 'Rdeci_Igralci')
+prva = ('Datum', 'Verzija', 'Modra_Stran', 'Rdeca_Stran', 'Zmagovalec', 'Modri_Igralci', 'Rdeci_Igralci', 'Liga')
 with open("podatki_csv/igre.csv", "w", encoding = "utf-8") as dat:
     writer = csv.writer(dat)
     writer.writerow(prva)
