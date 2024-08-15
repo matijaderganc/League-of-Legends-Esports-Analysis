@@ -4,30 +4,9 @@ import requests
 import re
 from bs4 import BeautifulSoup
 
+from leagues import turnirji_format, lige_format
+
 linki = []
-linki = []
-lige_format = [("LEC", 2019, 2025, ['Spring_Season', 'Spring_Playoffs', 'Summer_Season', 'Summer_Playoffs'], 'LEC'),
-               ("EU_LCS", 2014, 2019, ['Spring_Season', 'Spring_Playoffs', 'Summer_Season', 'Summer_Playoffs'], 'LEC'),
-               ("NA_LCS", 2014, 2019, ['Spring_Season', 'Spring_Playoffs', 'Summer_Season', 'Summer_Playoffs'], 'LCS'),
-               ("LCS", 2019, 2021, ['Spring_Season', 'Spring_Playoffs', 'Summer_Season', 'Summer_Playoffs'], 'LCS'),
-               ("LCS", 2021, 2022, ['Spring_Season', 'Lock_In', 'Mid-Season_Showdown', 'Summer_Season', 'Championship'], 'LCS'),
-               ("LCS", 2022, 2025, ['Spring_Season', 'Lock_In', 'Spring_Playoffs', 'Summer_Season', 'Championship'], 'LCS'),
-               ("LCK", 2013, 2025, ['Spring_Season', 'Spring_Playoffs', 'Summer_Season', 'Summer_Playoffs', 'Regional_Finals'], 'LCK'),
-               ("LPL", 2014, 2025, ['Spring_Season', 'Spring_Playoffs', 'Summer_Season', 'Summer_Playoffs', 'Regional_Finals'], 'LPL'),
-               ]
-#ime lige, začetek, konec, deli sezone v ligi
-
-#občasno se izvajajo tudi turnirji, ki so v drugačni obliki kot lige
-turnirji_format = [("_Season_World_Championship", 2014, 2017, 'International'), 
-                   ("_Season_World_Championship/Main_Event", 2017, 2024, 'International'),
-                   ("_Mid-Season_Invitational", 2015, 2017, 'International'),
-                    ("_Mid-Season_Invitational/Main_Event", 2017, 2020, 'International'),
-                   ("_Mid-Season_Invitational", 2021, 2024, 'International')
-
-]
-
-
-
 linki_lige = []
 
 for liga in lige_format:
@@ -61,10 +40,12 @@ def save_frontpage(page, directory, filename):
     text = download_url_to_string(page)
     save_string_to_file(text, directory, filename)
 
-n = 0        #ta del kode naloži html datoteke
-for link in linki:
-    save_frontpage(link, "igre_podatki", f"{n}.html")
-    n += 1
+odgovor = input('Če želite naložiti html datoteke napišite DA.')
+if odgovor == 'DA':
+    n = 0        #ta del kode naloži html datoteke
+    for link in linki:
+        save_frontpage(link, "igre_podatki", f"{n}.html")
+        n += 1
 
 vse_igre = []
 for i in range(len(linki)):

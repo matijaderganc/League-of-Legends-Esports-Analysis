@@ -8,10 +8,6 @@ from bs4 import BeautifulSoup
 
 test = []
 
-
-
-def zaokrozi(x, baza=50):
-    return baza * round(x/baza)
-
-print(zaokrozi(126))
-
+x = input("ali zelite")
+if x == "DA":
+    print(11)
