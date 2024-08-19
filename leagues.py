@@ -25,18 +25,7 @@ turnirji_format = [("_Season_World_Championship", 2014, 2017, 'International'),
                    ("_Mid-Season_Invitational", 2021, 2024, 'International')
 ]
 
-linki_lige = []
-
-for liga in lige_format:
-    for leto in range(liga[1], liga[2]):
-        for del_sezone in liga[3]:
-            linki.append(f'https://lol.fandom.com/wiki/{liga[0]}/{leto}_Season/{del_sezone}/Match_History')
-            linki_lige.append(liga[4])
 
 
-for turnir in turnirji_format:
-    for leto in range(turnir[1], turnir[2]):
-        linki.append(f'https://lol.fandom.com/wiki/{leto}{turnir[0]}/Match_History')
-        linki_lige.append(turnir[3])
 
 

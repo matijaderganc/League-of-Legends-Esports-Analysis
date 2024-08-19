@@ -1,7 +1,6 @@
 import csv
 import os
 import requests 
-import re
 from bs4 import BeautifulSoup
 
 from leagues import turnirji_format, lige_format
@@ -21,7 +20,7 @@ for turnir in turnirji_format:
         linki.append(f'https://lol.fandom.com/wiki/{leto}{turnir[0]}/Match_History')
         linki_lige.append(turnir[3])
 
-def download_url_to_string(url):
+def url_v_string(url):
     try:
         page_content = requests.get(url)
     except requests.exceptions.RequestException:   
@@ -29,22 +28,22 @@ def download_url_to_string(url):
         return None
     return page_content.text 
 
-def save_string_to_file(text, directory, filename):
+def string_v_datoteko(text, directory, ime):
     os.makedirs(directory, exist_ok=True)
-    path = os.path.join(directory, filename) #dobimo pot do datoteke
+    path = os.path.join(directory, ime) #dobimo pot do datoteke
     with open(path, 'w', encoding='utf-8') as file_out:
         file_out.write(text)
     return None
 
-def save_frontpage(page, directory, filename):
-    text = download_url_to_string(page)
-    save_string_to_file(text, directory, filename)
+def shrani_spletno_stran(page, directory, ime):
+    text = url_v_string(page)
+    string_v_datoteko(text, directory, ime)
 
 odgovor = input('Če želite naložiti html datoteke napišite DA.')
 if odgovor == 'DA':
     n = 0        #ta del kode naloži html datoteke
     for link in linki:
-        save_frontpage(link, "igre_podatki", f"{n}.html")
+        shrani_spletno_stran(link, "igre_podatki", f"{n}.html")
         n += 1
 
 vse_igre = []
